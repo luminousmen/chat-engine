@@ -38,7 +38,7 @@ class ChatEngine:
         # Initialize embeddings using HuggingFace
         self.embeddings = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL_NAME,
-            model_kwargs={'device': str(self.device)}
+            model_kwargs={"device": str(self.device)}
         )
 
         # Initialize the language model (LLM) for text generation
@@ -105,10 +105,10 @@ class ChatEngine:
         # Create a retrieval QA chain using the LLM, retriever, and prompt
         chain = RetrievalQA.from_chain_type(
             llm=self.llm,
-            chain_type='stuff',
+            chain_type="stuff",
             retriever=retriever,
             return_source_documents=False,
-            chain_type_kwargs={'prompt': prompt},
+            chain_type_kwargs={"prompt": prompt},
             verbose=False
         )
         
@@ -116,7 +116,7 @@ class ChatEngine:
         result = chain.invoke({"query": query})
         
         # Extract and return the response from the result
-        return result['result'].split('Answer: ')[-1]
+        return result["result"].split("Answer: ")[-1]
 
     def run_chat(self):
         """

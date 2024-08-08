@@ -33,7 +33,7 @@ class Retriever:
         """
         stock = yf.Ticker(symbol)
         stock_info = stock.info
-        news = stock.news if hasattr(stock, 'news') else []
+        news = stock.news if hasattr(stock, "news") else []
         financials = stock.quarterly_financials
         return stock_info, news, financials
 
@@ -45,9 +45,9 @@ class Retriever:
         try:
             response = requests.get(link)
             response.raise_for_status()
-            soup = BeautifulSoup(response.content, 'html.parser')
-            paragraphs = soup.find_all('p')
-            content = ' '.join([para.get_text() for para in paragraphs])
+            soup = BeautifulSoup(response.content, "html.parser")
+            paragraphs = soup.find_all("p")
+            content = " ".join([para.get_text() for para in paragraphs])
             return content
         except Exception as e:
             return ""
@@ -57,13 +57,13 @@ class Retriever:
         """
         Preprocess the documents by fetching their content and creating a TF-IDF vectorizer.
         """
-        texts = [Retriever.fetch_story_content(doc.get('link', '')) for doc in documents]
+        texts = [Retriever.fetch_story_content(doc.get("link", "")) for doc in documents]
         vectorizer = TfidfVectorizer()
         tfidf_matrix = vectorizer.fit_transform(texts)
         return vectorizer, tfidf_matrix, documents
 
     @staticmethod
-    def retrieve_documents(query, vectorizer, tfidf_matrix, documents, k=3):
+    def retrieve_documents(query, vectorizer, tfidf_matrix, documents, k=NUM_DOCS):
         """
         Retrieve the most relevant documents to the query using cosine similarity.
         """
@@ -121,7 +121,7 @@ class Augmenter:
         """
         return "\n".join(
             [
-                f"Document {i+1}: {doc.get('title', 'No Title')} - {Retriever.fetch_story_content(doc.get('link', ''))[:Augmenter.max_content_length]}"
+                f"Document {i+1}: {doc.get("title", "No Title")} - {Retriever.fetch_story_content(doc.get("link", ""))[:Augmenter.max_content_length]}"
                 for i, doc in enumerate(documents)
             ]
         )
@@ -138,13 +138,13 @@ class Augmenter:
         )        
         # Truncate if length exceeds max_length
         tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_MODEL)
-        inputs = tokenizer(augmented_query, return_tensors='pt')
-        if inputs['input_ids'].size(1) > max_length:
+        inputs = tokenizer(augmented_query, return_tensors="pt")
+        if inputs["input_ids"].size(1) > max_length:
             truncated_inputs = tokenizer.encode_plus(
-                augmented_query, max_length=max_length, truncation=True, return_tensors='pt'
+                augmented_query, max_length=max_length, truncation=True, return_tensors="pt"
             )
             augmented_query = tokenizer.decode(
-                truncated_inputs['input_ids'][0], 
+                truncated_inputs["input_ids"][0], 
                 skip_special_tokens=True
             )
         
@@ -168,7 +168,7 @@ class Generator:
         """
         Generate a response based on the augmented query.
         """
-        inputs = self.tokenizer(augmented_query, return_tensors='pt').to(self.device)
+        inputs = self.tokenizer(augmented_query, return_tensors="pt").to(self.device)
         outputs = self.model.generate(
             **inputs,
             pad_token_id=self.tokenizer.eos_token_id,
@@ -176,11 +176,11 @@ class Generator:
             num_return_sequences=NUM_RETURN_SEQUENCES
         )
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return response.split('Answer: ')[-1]
+        return response.split("Answer: ")[-1]
 
 # Main chat engine class
 class ChatEngine:
-    def __init__(self, retriever, augmenter, generator, symbol="SPOT"):
+    def __init__(self, retriever, augmenter, generator, symbol="TSLA"):
         self.retriever = retriever
         self.augmenter = augmenter
         self.generator = generator
