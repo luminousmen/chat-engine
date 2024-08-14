@@ -4,7 +4,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, set_seed
 from langchain import hub
 from langchain.chains import RetrievalQA
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_community.document_loaders import CSVLoader, TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
@@ -21,7 +21,7 @@ EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"  # Model for emb
 GENERATOR_MODEL = "meta-llama/Meta-Llama-3.1-8B"  # Model for generation
 MAX_NEW_TOKENS = 256  # Maximum tokens for the response generation
 NUM_RETURN_SEQUENCES = 1  # Number of response sequences to generate
-DOCUMENT_PATH = "./docs"  # Path to the document directory
+FILE_PATH = "./docs/elon_musk_tweets.csv"  # Path to the document directory
 DOCUMENT_REGEXP = "*.txt"  # Regular expression for matching text files
 VECTOR_STORE_PATH = "faiss"  # Path for storing the vector store
 
@@ -65,11 +65,7 @@ class ChatEngine:
         Create a vector store from text files in the specified directory.
         """
         # Load documents from the directory
-        loader = DirectoryLoader(
-            DOCUMENT_PATH, 
-            glob=DOCUMENT_REGEXP, 
-            loader_cls=TextLoader
-        )
+        loader = CSVLoader(FILE_PATH)
         documents = loader.load()
         
         # Split documents into smaller chunks
