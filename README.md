@@ -2,7 +2,7 @@
 
 This repository contains two implementations of a chat engine:
 1. **Stock-based Chat Engine**: A chatbot that retrieves and augments stock-related information to answer user queries.
-2. **Advanced Text-based Chat Engine**: A chatbot that uses document retrieval and language models to answer general text-based queries.
+2. **Advanced Text-based Chat Engine**: A chatbot that uses tweets retrieval and language models to answer general text-based queries.
 
 ## Disclaimer
 
@@ -18,7 +18,7 @@ This is not a production system. It is intended for educational purposes to unde
   - Generates responses using a pre-trained language model.
 
 - **Advanced Text-based Chat Engine**:
-  - Loads and preprocesses text documents.
+  - Loads and preprocesses tweets.
   - Creates and uses a FAISS vector store for efficient document retrieval.
   - Uses sentence-transformers for embeddings.
   - Generates responses using a pre-trained language model with retrieval-augmented generation (RAG) capabilities.
@@ -58,7 +58,7 @@ This is not a production system. It is intended for educational purposes to unde
    ```
 
 2. **Interaction**:
-   - Type your questions related to the documents in the specified directory.
+   - Type your questions related to tweets.
    - Type `exit` to quit the chatbot.
 
 ## Blog Posts
