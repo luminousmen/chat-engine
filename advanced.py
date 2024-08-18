@@ -21,8 +21,7 @@ EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"  # Model for emb
 GENERATOR_MODEL = "meta-llama/Meta-Llama-3.1-8B"  # Model for generation
 MAX_NEW_TOKENS = 256  # Maximum tokens for the response generation
 NUM_RETURN_SEQUENCES = 1  # Number of response sequences to generate
-FILE_PATH = "./docs/elon_musk_tweets.csv"  # Path to the document directory
-DOCUMENT_REGEXP = "*.txt"  # Regular expression for matching text files
+FILE_PATH = "./docs/elon_musk_tweets.csv"  # Path to the tweet file
 VECTOR_STORE_PATH = "faiss"  # Path for storing the vector store
 
 class ChatEngine:
@@ -58,21 +57,21 @@ class ChatEngine:
 
         # Create the vector store from text files if it doesn't exist
         if not os.path.exists(VECTOR_STORE_PATH):
-            self.create_vector_store_from_text()
+            self.create_vector_store_from_tweets()
 
-    def create_vector_store_from_text(self):
+    def create_vector_store_from_tweets(self):
         """
-        Create a vector store from text files in the specified directory.
+        Create a vector store from tweets in the specified directory.
         """
-        # Load documents from the directory
+        # Load tweets from csv file
         loader = CSVLoader(FILE_PATH)
-        documents = loader.load()
+        tweets = loader.load()
         
-        # Split documents into smaller chunks
+        # Split tweets into smaller chunks
         splitter = RecursiveCharacterTextSplitter()
-        texts = splitter.split_documents(documents)
+        texts = splitter.split_documents(tweets)
         
-        # Create a FAISS vector store from the documents
+        # Create a FAISS vector store from the tweets
         vector_store = FAISS.from_documents(
             documents=texts,
             embedding=self.embeddings
